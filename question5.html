@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .center {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .canvas {
+            width: 800px;
+            height: 800px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center">
+        <canvas id="sierpinskiCanvas" class="canvas" width="800" height="800" style="border: 1px solid #d3d3d3">
+            Your browser does not support the HTML5 canvas tag.</canvas>
+        <div>
+            <h2>Sierpinski Triangle</h2>
+            <p id="recLevel">unset</p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById("sierpinskiCanvas").getContext("2d");
+
+        const recLevel = 2; // Beware values higher than 10, browser could freeze!
+        // Recursion level. With d=0 we simply draw one triangle.
+        // With every additional level of recursion we draw 3 triangles in parent triangle.
+        // We calculating coordinates for them based on previos values fo
+
+
+        // left top point is x=0, y=0
+        // left bottom
+        const Ax = 50;
+        const Ay = 750; // 365.47
+
+        // right bottom
+        const Bx = 750; // 450
+        const By = 750; //365.4
+
+        // top
+        const Cx = 400; // 250
+        const Cy = 50; // 19.06
+
+        let i = 1; // Just for human reading in console we start from 1
+
+        function sierpinski(Ax, Ay, Bx, By, Cx, Cy, d, ctx) {
+            if (d > 0) {
+                sierpinski(
+                    Ax,
+                    Ay,
+                    (Ax + Cx) / 2,
+                    (Ay + Cy) / 2,
+                    (Ax + Bx) / 2,
+                    (Ay + By) / 2,
+                    d - 1,
+                    ctx
+                );
+                sierpinski(
+                    (Ax + Bx) / 2,
+                    (Ay + By) / 2,
+                    (Bx + Cx) / 2,
+                    (By + Cy) / 2,
+                    Bx,
+                    By,
+                    d - 1,
+                    ctx
+                );
+                sierpinski(
+                    (Ax + Cx) / 2,
+                    (Ay + Cy) / 2,
+                    (Bx + Cx) / 2,
+                    (By + Cy) / 2,
+                    Cx,
+                    Cy,
+                    d - 1,
+                    ctx
+                );
+            } else {
+                let r = Math.floor(Math.random() * 255) + 1;
+                let g = Math.floor(Math.random() * 255) + 1;
+                let b = Math.floor(Math.random() * 255) + 1;
+                console.log("%cTriangles: " + i, "color: rgb(" + r + "," + g + "," + b + ")");
+
+                ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                // ctx.fillStyle = "#00FF00";
+                ctx.strokeStyle = "grey";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.beginPath();
+                
+                // Move to A point and draw lines step by step from A to B to C and to A to finish triangle.
+                ctx.moveTo(Ax, Ay);
+                ctx.lineTo(Bx, By);
+                ctx.lineTo(Cx, Cy);
+                ctx.lineTo(Ax, Ay);
+
+                ctx.fill();
+                i++;
+            }
+        }
+
+        sierpinski(Ax, Ay, Bx, By, Cx, Cy, recLevel, ctx);
+    </script>
+
+    <script>
+        // Print some info
+        document.getElementById("recLevel").innerHTML = "recLevel: " + recLevel;
+    </script>
+</body>
+
+</html>
